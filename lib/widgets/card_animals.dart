@@ -113,19 +113,18 @@ class _CardAnimalsState extends State<CardAnimals> {
   }
 }
 
-// Exemplo de como fazer uma requisição para obter dados da API
 Future<void> fetchAnimalData(BuildContext context) async {
-  final response = await http.get(Uri.parse('https://api.example.com/animal'));
+  final response = await http.get(Uri.parse('https://pet-adopt-dq32j.ondigitalocean.app/pet/pets'));
 
   if (response.statusCode == 200) {
-    // Suponhamos que o JSON retorne os campos 'name', 'age', 'color' e 'image_url'
+
     final Map<String, dynamic> data = json.decode(response.body);
     String name = data['name'];
     String age = data['age'];
     String color = data['color'];
-    String imageUrl = data['image_url'];  // O link da imagem fornecido pela API
+    String imageUrl = data['image_url'];  
 
-    // Passar esses dados para o widget CardAnimals
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -133,7 +132,7 @@ Future<void> fetchAnimalData(BuildContext context) async {
           name: name,
           age: age,
           color: color,
-          imagePath: imageUrl,  // Passando o link da imagem para o widget
+          imagePath: imageUrl,  
         ),
       ),
     );
