@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_adopt/view/favorites.dart';
+import 'package:pet_adopt/view/home.dart';
 
 class UserPage extends StatelessWidget {
   const UserPage({super.key});
@@ -53,7 +54,7 @@ class UserPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const FavoritesPage(),
+                        builder: (context) => const Home(),
                       ),
                     );
                     ('Favorites');

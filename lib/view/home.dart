@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pet_adopt/view/information.dart';
 import 'package:pet_adopt/widgets/card_animals.dart';
 import 'package:pet_adopt/widgets/card_donate.dart';
 import 'package:pet_adopt/widgets/card_option.dart';
@@ -7,6 +6,7 @@ import 'package:pet_adopt/widgets/header.dart';
 import 'package:pet_adopt/widgets/search.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:pet_adopt/view/informationPage.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -27,15 +27,14 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> fetchAnimals() async {
-    const String apiUrl =
-        'https://pet-adopt-dq32j.ondigitalocean.app/pet/pets'; 
+    const String apiUrl = 'https://pet-adopt-dq32j.ondigitalocean.app/pet/pets';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          animals = data['pets'];
+          animals = data['pets']; 
           isLoading = false;
         });
       } else {
@@ -50,6 +49,13 @@ class _HomeState extends State<Home> {
         isLoading = false;
       });
     }
+  }
+
+  String getFirstImage(dynamic images) {
+    if (images is List && images.isNotEmpty) {
+      return images[0];
+    }
+    return 'https://via.placeholder.com/150';
   }
 
   @override
@@ -109,20 +115,29 @@ class _HomeState extends State<Home> {
                             ),
                             itemCount: animals.length,
                             itemBuilder: (context, index) {
+                              final pet = animals[index];
+
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => InformationPage(),
+                                      builder: (context) => DogDetailPage(
+                                        dogName: pet['name'] ?? 'Sem nome',
+                                        dogAge: pet['age'] != null
+                                            ? '${pet['age']} meses'
+                                            : 'Idade desconhecida',
+                                        imageUrl: getFirstImage(pet['images']),
+                                      ),
                                     ),
                                   );
                                 },
-                                child: CardAnimals(
-                                  name: animals[index]['name'],
-                                  age: ' Age: ${animals[index]['age']} | ',
-                                  color: 'Color: ${animals[index]['color']} ',
-                                  imagePath: animals[index]['image'],
+                                child: DogCard(
+                                  dogName: pet['name'] ?? 'Sem nome',
+                                  dogAge: pet['age'] != null
+                                      ? '${pet['age']} meses'
+                                      : 'Idade desconhecida',
+                                  imageUrl: getFirstImage(pet['images']),
                                 ),
                               );
                             },

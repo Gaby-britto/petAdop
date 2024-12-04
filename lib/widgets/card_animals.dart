@@ -1,143 +1,123 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:pet_adopt/view/informationPage.dart';
 
-class CardAnimals extends StatefulWidget {
-  final String? name;
-  final String? age;
-  final String? color;
-  final String? imagePath;
+class DogCard extends StatelessWidget {
+  final String dogName;
+  final String dogAge;
+  final String imageUrl;
+  final String? color;  // Adicionando cor, conforme discutido anteriormente
   
-  const CardAnimals({
-    Key? key,
-    required this.name,
-    required this.age,
-    required this.color,
-    required this.imagePath,
-  }) : super(key: key);
+  const DogCard({
+    required this.dogName,
+    required this.dogAge,
+    required this.imageUrl,
+    this.color, // Tornando color opcional
+  });
 
-  @override
-  _CardAnimalsState createState() => _CardAnimalsState();
-}
-
-class _CardAnimalsState extends State<CardAnimals> {
-  @override
-  Widget build(BuildContext context) {
-    // Valores padrão para evitar nulos
-    final String displayName = widget.name ?? 'Unknown';
-    final String displayAge = widget.age ?? 'Age not available |';
-    final String displayColor = widget.color ?? 'color not available';
-    final String displayImagePath = widget.imagePath ?? 'assets/images/default_image.jpg';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: widget.imagePath?.startsWith('http') ?? false
-              ? Image.network(
-                  displayImagePath,
-                  height: 200,
-                  width: 150,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Container(
-                      height: 100,
-                      width: 160,
-                      alignment: Alignment.center,
-                      color: Colors.grey[300],
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                            : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return _fallbackImage();
-                  },
-                )
-              : Image.asset(
-                  displayImagePath,
-                  height: 150,
-                  width: 150,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return _fallbackImage();
-                  },
-                ),
-        ),
-        SizedBox(height: 5),
-        Text(
-          displayName,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        SizedBox(height: 2),
-        Row(
-          children: [
-            Text(
-              displayAge,
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-            SizedBox(width: 2),
-            Text(
-              displayColor,
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  // Widget de fallback para imagens quebradas
-  Widget _fallbackImage() {
-    return Container(
-      height: 150,
-      width: 160,
-      alignment: Alignment.center,
-      color: Colors.grey[300],
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.broken_image, size: 50, color: Colors.grey[600]),
-          SizedBox(height: 8),
-          Text(
-            'Image unavailable',
-            style: TextStyle(color: Colors.grey[600], fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-Future<void> fetchAnimalData(BuildContext context) async {
-  final response = await http.get(Uri.parse('https://pet-adopt-dq32j.ondigitalocean.app/pet/pets'));
-
-  if (response.statusCode == 200) {
-
-    final Map<String, dynamic> data = json.decode(response.body);
-    String name = data['name'];
-    String age = data['age'];
-    String color = data['color'];
-    String imageUrl = data['image_url'];  
-
-
+  void navigateToDetails(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CardAnimals(
-          name: name,
-          age: age,
-          color: color,
-          imagePath: imageUrl,  
+        builder: (context) => DogDetailPage(
+          dogName: dogName,
+          dogAge: dogAge,
+          imageUrl: imageUrl,
         ),
       ),
     );
-  } else {
-    // Se a requisição falhar
-    throw Exception('Failed to load animal data');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final String displayColor = color ?? 'Color not available'; // Exibe cor padrão se não fornecida
+
+    return GestureDetector(
+      onTap: () => navigateToDetails(context),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white, // Definindo a cor do fundo
+          boxShadow: [ // Sombras para dar destaque
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 5.0,
+              offset: Offset(0, 2), // Sombra suave
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(10), // Garantindo algum espaçamento interno
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center, // Centralizando os itens
+          children: [
+            // Carregando imagem com fallback
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: imageUrl.startsWith('http') 
+                  ? Image.network(
+                      imageUrl,
+                      height: 100,
+                      width: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _fallbackImage(); // Caso falhe ao carregar a imagem
+                      },
+                    )
+                  : Image.asset(
+                      imageUrl,
+                      height: 100,
+                      width: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return _fallbackImage(); // Caso falhe ao carregar a imagem
+                      },
+                    ),
+            ),
+            SizedBox(height: 8),
+            // Exibindo o nome do cachorro
+            Text(
+              dogName,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black, // Cor do texto
+              ),
+              textAlign: TextAlign.center, // Alinhamento central
+            ),
+            SizedBox(height: 4),
+            // Exibindo a idade do cachorro
+            Text(
+              dogAge,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[700], // Cor mais suave
+              ),
+              textAlign: TextAlign.center, // Centralizando
+            ),
+            SizedBox(height: 4),
+            // Exibindo a cor do cachorro (opcional)
+            Text(
+              displayColor,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[500], // Cor mais clara para a cor do cachorro
+              ),
+              textAlign: TextAlign.center, // Centralizando
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget para fallback de imagem caso não consiga carregar
+  Widget _fallbackImage() {
+    return Container(
+      height: 100,
+      width: 100,
+      alignment: Alignment.center,
+      color: Colors.grey[300],
+      child: Icon(Icons.broken_image, size: 40, color: Colors.grey[600]),
+    );
   }
 }

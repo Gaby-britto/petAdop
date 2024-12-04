@@ -1,15 +1,89 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pet_adopt/view/home.dart';
-import 'package:pet_adopt/widgets/card_formPet.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';  // Importar SharedPreferences
 
 class RegisterPetPage extends StatefulWidget {
   const RegisterPetPage({super.key});
 
   @override
-  State<RegisterPetPage> createState() => _MyHomePageState();
+  State<RegisterPetPage> createState() => _RegisterPetPageState();
 }
 
-class _MyHomePageState extends State<RegisterPetPage> {
+class _RegisterPetPageState extends State<RegisterPetPage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController colorController = TextEditingController();
+  final TextEditingController weightController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController imagesController = TextEditingController();
+
+  // Função para criar o pet
+  Future<void> _createPet() async {
+    final String url = "https://pet-adopt-dq32j.ondigitalocean.app/pet/create";
+
+    // Recuperar o token armazenado
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('user_token');
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Token não encontrado. Faça login novamente.")),
+      );
+      return;
+    }
+
+    // Dados do corpo da requisição
+    final Map<String, dynamic> body = {
+      "name": nameController.text,
+      "color": colorController.text,
+      "weight": int.tryParse(weightController.text) ?? 0,
+      "age": int.tryParse(ageController.text) ?? 0,
+      "images": imagesController.text.split(","),
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token", // Enviar o token na autorização
+        },
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Pet criado com sucesso!")),
+        );
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erro ao criar pet: ${response.body}")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Erro: $e")),
+      );
+    }
+  }
+
+  // Função que cria um TextField personalizado
+  Widget buildTextField(String labelText, TextEditingController controller) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +93,7 @@ class _MyHomePageState extends State<RegisterPetPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const Home(),
@@ -76,7 +150,17 @@ class _MyHomePageState extends State<RegisterPetPage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  PetRegister(),
+                  SizedBox(height: 20),
+                  buildTextField("Nome:", nameController),
+                  SizedBox(height: 15),
+                  buildTextField("Cor:", colorController),
+                  SizedBox(height: 15),
+                  buildTextField("Peso (kg):", weightController),
+                  SizedBox(height: 15),
+                  buildTextField("Idade (meses):", ageController),
+                  SizedBox(height: 15),
+                  buildTextField(
+                      "Imagens (URLs separadas por vírgula):", imagesController),
                   SizedBox(height: 20),
                   Center(
                     child: Padding(
@@ -87,14 +171,7 @@ class _MyHomePageState extends State<RegisterPetPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFFb19cd9),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Home(),
-                              ),
-                            );
-                          },
+                          onPressed: _createPet, // Chama a função para criar o pet
                           child: const Text(
                             "Register",
                             style: TextStyle(color: Colors.white),
