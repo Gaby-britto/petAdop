@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:pet_adopt/view/home.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';  // Importar SharedPreferences
+import 'package:shared_preferences/shared_preferences.dart'; // Importar SharedPreferences
 
 class RegisterPetPage extends StatefulWidget {
   const RegisterPetPage({super.key});
@@ -18,11 +18,9 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController imagesController = TextEditingController();
 
-  // Função para criar o pet
   Future<void> _createPet() async {
     final String url = "https://pet-adopt-dq32j.ondigitalocean.app/pet/create";
 
-    // Recuperar o token armazenado
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('user_token');
 
@@ -33,7 +31,6 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
       return;
     }
 
-    // Dados do corpo da requisição
     final Map<String, dynamic> body = {
       "name": nameController.text,
       "color": colorController.text,
@@ -47,7 +44,7 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
         Uri.parse(url),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token", // Enviar o token na autorização
+          "Authorization": "Bearer $token",
         },
         body: json.encode(body),
       );
@@ -72,7 +69,6 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
     }
   }
 
-  // Função que cria um TextField personalizado
   Widget buildTextField(String labelText, TextEditingController controller) {
     return TextField(
       controller: controller,
@@ -159,8 +155,8 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
                   SizedBox(height: 15),
                   buildTextField("Idade (meses):", ageController),
                   SizedBox(height: 15),
-                  buildTextField(
-                      "Imagens (URLs separadas por vírgula):", imagesController),
+                  buildTextField("Imagens (URLs separadas por vírgula):",
+                      imagesController),
                   SizedBox(height: 20),
                   Center(
                     child: Padding(
@@ -171,7 +167,7 @@ class _RegisterPetPageState extends State<RegisterPetPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xFFb19cd9),
                           ),
-                          onPressed: _createPet, // Chama a função para criar o pet
+                          onPressed: _createPet,
                           child: const Text(
                             "Register",
                             style: TextStyle(color: Colors.white),

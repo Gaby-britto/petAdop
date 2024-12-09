@@ -15,9 +15,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
-  // Função para cadastrar o usuário
   Future<void> _signUp() async {
     String username = _usernameController.text;
     String email = _emailController.text;
@@ -25,7 +25,6 @@ class _RegisterPageState extends State<RegisterPage> {
     String password = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
 
-    // Verificando se todos os campos foram preenchidos
     if (username.isEmpty ||
         email.isEmpty ||
         phone.isEmpty ||
@@ -37,7 +36,6 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    // Verificando se as senhas coincidem
     if (password != confirmPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('As senhas não coincidem')),
@@ -46,7 +44,8 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     try {
-      var url = Uri.parse('https://pet-adopt-dq32j.ondigitalocean.app/user/register');
+      var url =
+          Uri.parse('https://pet-adopt-dq32j.ondigitalocean.app/user/register');
       var response = await http.post(
         url,
         headers: {"Content-Type": "application/json"},
@@ -64,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(data['message'])),
         );
-        // Redireciona para a tela de login após o cadastro
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => LoginPage()),
@@ -84,7 +83,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Obtendo o tamanho da tela para ajustar a UI
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -115,7 +113,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
               // Formulário
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -158,7 +157,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     const SizedBox(height: 15),
 
-                    // Título do formulário
                     const Center(
                       child: Text(
                         "Register",
@@ -235,7 +233,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFb19cd9),
                           ),
-                          onPressed: _signUp,  // Chama a função de cadastro
+                          onPressed: _signUp, // Chama a função de cadastro
                           child: const Text(
                             "Save",
                             style: TextStyle(color: Colors.white),

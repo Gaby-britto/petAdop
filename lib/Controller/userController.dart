@@ -7,9 +7,8 @@ class UserController {
     final url = Uri.parse('https://pet-adopt-dq32j.ondigitalocean.app/user/register');
 
     try {
-      final userJson = jsonEncode(user.toJson());  // Envia o modelo como JSON
-
-      print('Enviando JSON: $userJson');  // Verifique o JSON enviado
+      final userJson = jsonEncode(user.toJson());  
+      print('Enviando JSON: $userJson');  
 
       final response = await http.post(
         url,
@@ -17,7 +16,7 @@ class UserController {
         body: userJson,
       );
 
-      print('Resposta da API: ${response.body}'); // Resposta da API para debug
+      print('Resposta da API: ${response.body}'); 
 
       if (response.statusCode == 200) {
         return 'Usuário cadastrado com sucesso!';

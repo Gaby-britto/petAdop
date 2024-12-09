@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pet_adopt/view/favorites.dart';
-import 'package:pet_adopt/view/home.dart';
-
 class UserPage extends StatelessWidget {
   const UserPage({super.key});
 
@@ -43,29 +40,6 @@ class UserPage extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFb19cd9),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Home(),
-                      ),
-                    );
-                    ('Favorites');
-                  },
-                  child: Text(
-                    'Favorites',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),

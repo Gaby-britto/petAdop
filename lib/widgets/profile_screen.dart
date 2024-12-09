@@ -33,11 +33,7 @@ class PetProfileScreen extends StatelessWidget {
                 // Information row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: const [
-                    // InfoCard('3 Months', 'Age', Colors.orange),
-                    // InfoCard('Female', 'Gender', Colors.pink),
-                    // InfoCard('2kg', 'Weight', Colors.red),
-                  ],
+                  children: const [],
                 ),
                 const SizedBox(height: 24),
                 // About section

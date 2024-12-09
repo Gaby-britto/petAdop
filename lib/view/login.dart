@@ -16,8 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   String _errorMessage = "";
   String? _authToken;
-  
-  // Definindo a chave para o formulário
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   Future<void> _login() async {
@@ -31,7 +30,8 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    final Uri url = Uri.parse("https://pet-adopt-dq32j.ondigitalocean.app/user/login");
+    final Uri url =
+        Uri.parse("https://pet-adopt-dq32j.ondigitalocean.app/user/login");
     try {
       final response = await http.post(
         url,
@@ -46,7 +46,6 @@ class _LoginPageState extends State<LoginPage> {
         final responseData = jsonDecode(response.body);
 
         if (responseData['token'] != null) {
-          // Armazenar o token nas SharedPreferences
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('user_token', responseData['token']);
 
@@ -57,7 +56,6 @@ class _LoginPageState extends State<LoginPage> {
 
           print('Token armazenado: $_authToken');
 
-          // Navegar para a próxima tela
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => Home()),
@@ -132,7 +130,6 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  // Formulário de Login
                   Form(
                     key: _formKey,
                     child: Column(
@@ -150,12 +147,13 @@ class _LoginPageState extends State<LoginPage> {
                             hintText: "Digite seu email",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Colors.black, width: 1),
+                              borderSide: const BorderSide(
+                                  color: Colors.black, width: 1),
                             ),
                           ),
                         ),
                         const SizedBox(height: 15),
-                        // Campo de Senha
+
                         TextFormField(
                           controller: _passwordController,
                           obscureText: true,
@@ -169,7 +167,8 @@ class _LoginPageState extends State<LoginPage> {
                             hintText: "Digite sua senha",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
-                              borderSide: const BorderSide(color: Colors.black, width: 1),
+                              borderSide: const BorderSide(
+                                  color: Colors.black, width: 1),
                             ),
                           ),
                         ),
@@ -177,7 +176,6 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-                  // Botão de login
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -187,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFb19cd9),
                           ),
-                          onPressed: _login,  // Chama a função de login
+                          onPressed: _login, // Chama a função de login
                           child: const Text(
                             "Login",
                             style: TextStyle(color: Colors.white),
@@ -196,7 +194,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  // Mensagem de erro
                   if (_errorMessage.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
